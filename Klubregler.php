@@ -83,9 +83,11 @@
     </font>
     
     <br><br>
-    <center>
-        <button type="Submit" value="yes">    Jeg accepterer         </button>
-        <button type="Submit" value="no">     Jeg accepterer ikke    </button>
+    <center> 
+        <form>
+        <button type="Submit" formaction="ProjektTest.php">                 Jeg accepterer         </button>
+        <button type="Submit" formaction='http://www.Nørrebrofighters.dk'>  Jeg accepterer ikke    </button>
+        </form>
     </center>
     </body>
 </html>
