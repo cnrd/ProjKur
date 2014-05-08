@@ -7,5 +7,5 @@
 
     $dbServer = "oci:dbname=//localhost:1521/dbwc";
     $dbLogin  = "sqd917";
-    $dbPass   = "dbx2014"
+    $dbPass   = "dbx2014";
   }
