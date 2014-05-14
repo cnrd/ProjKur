@@ -14,6 +14,7 @@
 
 
     <?php
+    include("config.php");
     //I define the error variables and set them to an empty value
     $firstnameErr = $lastnameErr = $yearErr = $addressErr = $postalcodeErr = $cityErr = $mtlpErr = $memailErr = $cemailErr = $passErr = $contactnameErr = $contactphoneErr = $contactemailErr = "";
 
@@ -35,6 +36,7 @@
             $firstname = testInput($_POST["firstname"]);
             if (!preg_match("/^[a-zæøåA-ZÆØÅ ]*$/",$firstname)) {
                 $firstnameErr = "* Det er kun tilladt at bruge bogstaver";
+                $firstname = "";
             }
         }
         if (empty($_POST["lastname"])) {
@@ -44,6 +46,7 @@
             $lastname = testInput($_POST["lastname"]);
             if (!preg_match("/^[a-zæøåA-ZÆØÅ ]*$/",$lastname)) {
                 $lastnameErr = "* Det er kun tilladt at bruge bogstaver";
+                $lastname = "";
             }
         }
         if (empty($_POST["year"])) {
@@ -53,6 +56,7 @@
             $year = testInput($_POST["year"]);
             if (!preg_match("/^[0-9]*$/",$year)) {
                 $yearErr = "* Det er kun tilladt at bruge tal";
+                $year = "";
             }
         }
         if (empty($_POST["address"])) {
@@ -62,6 +66,7 @@
             $address = testInput($_POST["address"]);
             if (!preg_match("/^[0-9a-zæøåA-ZÆØÅ., ]*$/",$address)) {
                 $addressErr = "* Det er kun tilladt at bruge bogstaver,tal, komma og punktum";
+                $address = "";
             }
         }
         if (empty($_POST["postalcode"])) {
@@ -71,6 +76,7 @@
             $postalcode = testInput($_POST["postalcode"]);
             if (!preg_match("/^[0-9]*$/",$postalcode)) {
                 $postalcodeErr = "* Det er kun tilladt at bruge bogstaver og tal";
+                $postalcode = "";
             }
         }
         if (empty($_POST["city"])) {
@@ -80,6 +86,7 @@
             $city = testInput($_POST["city"]);
             if (!preg_match("/^[a-zæøåA-ZÆØÅ ]*$/",$city)) {
                 $cityErr = "* Det er kun tilladt at bruge bogstaver";
+                $city = "";
             }
         }
         if (empty($_POST["mtlp"])) {
@@ -89,6 +96,7 @@
             $mtlp = testInput($_POST["mtlp"]);
             if (!preg_match("/^[0-9]*$/",$mtlp)) {
                 $mtlpErr = "* Det er kun tilladt at bruge tal";
+                $mtlp = "";
             }
         }
         if (empty($_POST["memail"])) {
@@ -98,6 +106,7 @@
             $memail = testInput($_POST["memail"]);
             if (!preg_match("/([\wæøå\-]+\@[\wæøå\-]+\.[\w\-]+)/",$memail)) {
                 $memailErr = "* Ugyldig email-adresse";
+                $memail = "";
             }
         }
         if (empty($_POST["cemail"])) {
@@ -107,6 +116,7 @@
             $cemail = testInput($_POST["cemail"]);
             if (strcasecmp($memail,$cemail )!=0) {
                 $cemailErr = "* Email-adresserne matcher ikke";
+                $cemail = "";
             }
         }
         if (empty($_POST["pass"])) {
@@ -116,6 +126,7 @@
             $pass = testInput($_POST["pass"]);
             if (!preg_match("/^[0-9a-zæøåA-ZÆØÅ]*$/",$pass)) {
                 $passErr = "* Dit password må kun indeholde bogstaver og tal";
+                $pass = "";
             }
         }
         if (empty($_POST["contactname"])) {
@@ -123,8 +134,9 @@
         }
         else {
             $contactname = testInput($_POST["contactname"]);
-            if (!preg_match("/^[a-zæøåA-ZÆØÅ ]*$/",$$contactname)) {
+            if (!preg_match("/^[a-zæøåA-ZÆØÅ ]*$/",$contactname)) {
                 $contactnameErr = "* Der må kun være bogstaver og mellemrum";
+                $contactname = "";
             }
         }
         if (empty($_POST["contactphone"])) {
@@ -132,8 +144,9 @@
         }
         else {
             $contactphone = testInput($_POST["contactphone"]);
-            if (!preg_match("/^[0-9]*$/",$$contactphone)) {
+            if (!preg_match("/^[0-9]*$/",$contactphone)) {
                 $contactphoneErr = "* Telefonnummeret må kun indeholde tal";
+                $contactphone = "";
             }
         }
         if (empty($_POST["contactname"])) {
@@ -143,10 +156,15 @@
             $contactemail = testInput($_POST["contactemail"]);
             if (!preg_match("/([\wæøå\-]+\@[\wæøå\-]+\.[\w\-]+)/",$contactemail)) {
                 $contactemailErr = "* Ugyldig email-adresse";
+                $contactemail = "";
             }
         }
+        $day = $_POST["day"];
+        $month = $_POST["month"];
+        $textbox = $_POST["textbox"];
     }
 
+    /*
     //When the user clicks submit, we retrieve the information by using the request method POST
     $firstname     = $_POST['firstname'];
     $lastname      = $_POST['lastname'];
@@ -164,6 +182,7 @@
     $contactphone  = $_POST['contactphone'];
     $contactemail  = $_POST['contactemail'];
     $textbox       = $_POST['textbox'];
+    */
 
 
 
@@ -172,11 +191,30 @@
         if(!empty($firstname) && !empty($lastname)  && !empty($year) && !empty($address) && !empty($postalcode) && !empty($city) && !empty($mtlp) && !empty($memail) && !empty($cemail) && !empty($pass) && !empty($contactname) && !empty($contactphone) && !empty($contactemail)) {
             if (empty($firstnameErr) && empty($lastnameErr) && empty($yearErr) && empty($addressErr) && empty($postalcodeErr) && empty($cityErr) && empty($mtlpErr) && empty($memailErr) && empty($cemailErr) && empty($passErr) && empty($contactnameErr) && empty($contactphoneErr) && empty($contactemailErr)) {
 
+                echo $firstname;
+                echo $lastname;
+                echo $day;
+                echo $month;
+                echo $year;
+                echo $address;
+                echo $postalcode;
+                echo $city;
+                echo $mtlp;
+                echo $memail;
+                echo $cemail;
+                echo $pass;
+                echo $contactname;
+                echo $contactphone;
+                echo $contactemail;
+                echo $textbox;
+
+
+
                 //If correct, we connect to the database  (Right now, it's connecting to the wrong database)
                 try {
-                    $dbh = new PDO(configClass::$dbServer, configClass::$dbLogin, configClass::$dbPass); 
+                    $dbh = new PDO($dbServer, $dbLogin, $dbPass);
                 }
-                catch (PDOException $e1) {
+                catch (PDOException $e) {
                     print "Error!: " . $e->getMessage() . "<br/>";
                 die();
                 }
@@ -185,25 +223,40 @@
                 try {
                     $dbh->beginTransaction();
 
-                    $query1 = "INSERT INTO MedlemsDatabase ";
-                    $query1.= "VALUES $firstname, $lastname, $memail, $mtlp";
+                    $query1 = "INSERT INTO MedlemsDatabase(fornavn,efternavn,medlemsemail,telefon) ";
+                    $query1.= "VALUES (?, ?, ?, ?)";
+                    $prepQ1 = $dbh->prepare($query1);
 
-                    $query2 = "INSERT INTO LogInDatabase ";  //We are going to find a method for storing passwords securely
-                    $query2.= "VALUES $memail, $pass";
+                    $query2 = "INSERT INTO LogInDatabase(loginEmail,password) ";  //We are going to find a method for storing passwords securely
+                    $query2.= "VALUES (?, ?)";
+                    $prepQ2 = $dbh->prepare($query2);
 
-                    $query3 = "INSERT INTO MereInfo(infoEmail, foedselsdato, adresse, postnummer, by, yderligereInfo) ";
-                    $query3.= "VALUES $memail, $year.'-'.$month.'-'.$day, $address, $postalcode, $city, $textbox";
+                    $query3 = "INSERT INTO MereInfo(infoEmail, foedselsdato, adresse, postnummer, byen, yderligereInfo) ";
+                    $query3.= "VALUES (?, ?, ?, ?, ?, ?)";
+                    $prepQ3 = $dbh->prepare($query3);
 
-                    $query4 = "INSERT INTO KontaktPerson ";
-                    $query4.= "VALUES $contactname, $contactphone, $contactemail, $memail";
+                    $query4 = "INSERT INTO KontaktPersonen(konNavn,konTelefon,konEmail,konForEmail) ";
+                    $query4.= "VALUES (?, ?, ?, ?)";
+                    $prepQ4 = $dbh->prepare($query4);
 
                     $query5 = "INSERT INTO Betaling(betalingsemail) ";
-                    $query5.= "VALUES $memail";
+                    $query5.= "VALUES (?)";
+                    $prepQ5 = $dbh->prepare($query5);
 
-                    $dbh->query($query);
+                    echo $query1;
+                    echo $query2;
+                    echo $query3;
+                    echo $query4;
+                    echo $query5;
+
+                    $prepQ1->execute(array($firstname,$lastname,$memail,$mtlp));
+                    $prepQ2->execute(array($memail,$pass));
+                    $prepQ3->execute(array($memail, $year.'-'.$month.'-'.$day, $address, $postalcode, $city, $textbox));
+                    $prepQ4->execute(array($contactname, $contactphone, $contactemail, $memail));
+                    $prepQ5->execute(array($memail));
                     $dbh->commit();
 
-                } catch (Exception $e2) {
+                } catch (Exception $e) {
                     echo $e->getMessage();
                     $dbh->rollback();
                 }
@@ -211,6 +264,26 @@
                 echo "Du er nu blevet tilmeldt, yay";   //Consider redirecting them to a new page
             }
         }
+    }
+
+    //Making sure fields are not populated by errors..
+    if(!isset($_POST['Submit'])){
+      $firstname     = "";
+      $lastname      = "";
+      $day           = "";
+      $month         = "";
+      $year          = "";
+      $address       = "";
+      $postalcode    = "";
+      $city          = "";
+      $mtlp          = "";
+      $memail        = "";
+      $cemail        = "";
+      $pass          = "";
+      $contactname   = "";
+      $contactphone  = "";
+      $contactemail  = "";
+      $textbox       = "";
     }
 
     ?>
