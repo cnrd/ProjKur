@@ -1,3 +1,5 @@
-This is a README...
+Install Apache and MySQL.
 
-Fill this out...
+Edit server and user in config.php
+
+Add the database config from dbConfig.sql to your database.
