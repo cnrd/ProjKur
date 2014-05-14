@@ -191,23 +191,6 @@
         if(!empty($firstname) && !empty($lastname)  && !empty($year) && !empty($address) && !empty($postalcode) && !empty($city) && !empty($mtlp) && !empty($memail) && !empty($cemail) && !empty($pass) && !empty($contactname) && !empty($contactphone) && !empty($contactemail)) {
             if (empty($firstnameErr) && empty($lastnameErr) && empty($yearErr) && empty($addressErr) && empty($postalcodeErr) && empty($cityErr) && empty($mtlpErr) && empty($memailErr) && empty($cemailErr) && empty($passErr) && empty($contactnameErr) && empty($contactphoneErr) && empty($contactemailErr)) {
 
-                echo $firstname;
-                echo $lastname;
-                echo $day;
-                echo $month;
-                echo $year;
-                echo $address;
-                echo $postalcode;
-                echo $city;
-                echo $mtlp;
-                echo $memail;
-                echo $cemail;
-                echo $pass;
-                echo $contactname;
-                echo $contactphone;
-                echo $contactemail;
-                echo $textbox;
-
 
 
                 //If correct, we connect to the database  (Right now, it's connecting to the wrong database)
@@ -242,12 +225,6 @@
                     $query5 = "INSERT INTO Betaling(betalingsemail) ";
                     $query5.= "VALUES (?)";
                     $prepQ5 = $dbh->prepare($query5);
-
-                    echo $query1;
-                    echo $query2;
-                    echo $query3;
-                    echo $query4;
-                    echo $query5;
 
                     $prepQ1->execute(array($firstname,$lastname,$memail,$mtlp));
                     $prepQ2->execute(array($memail,$pass));
