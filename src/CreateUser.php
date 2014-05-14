@@ -233,6 +233,12 @@
                     $prepQ5->execute(array($memail));
                     $dbh->commit();
 
+                    $selfSite = htmlspecialchars($_SERVER["HTTP_HOST"]);
+                    $userCreated = "http://" . $selfSite . "/src/UserCreated.php";
+
+                    header( 'Location: ' . $userCreated ) ;
+
+
                 } catch (Exception $e) {
                     echo $e->getMessage();
                     $dbh->rollback();
