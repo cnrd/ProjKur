@@ -289,7 +289,136 @@
                     $dbh->rollback();
                 }
 
-                echo "Du er nu blevet tilmeldt, yay";   //Consider redirecting them to a new page
+                echo "<h4>Tilmeldingen er blevet registreret.<br> Vi har sendt en PDF-fil til din email som du skal printe ud og aflevere i klubben</h4><br><br><br><br><br><br><br>";   //Consider redirecting them to a new page
+                
+                
+                
+                //We are going to use the member's email as the name for the generated pdf
+                function clean($string) {
+                    return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+                }                
+                $pdfname = clean($memail);
+
+                
+                //The php class FPDF is used to create the PDF file:
+                require("fpdf17/fpdf.php");
+                
+                //We are redeclaring the Header method, so the Nørrebro Fighters logo is added to the PDF:
+                class myPDF extends FPDF {
+                    //Page header method
+                    function Header() {
+                        $this->SetFont('Arial','B',15);
+                        // Logo
+                        $this->Image('logo.png',160,10,30);
+                        // Line break
+                        $this->Ln(20);
+                    }
+                }
+                
+                //The pdf is made:
+                $pdf = new myPDF( );
+                $pdf->AddPage();
+                
+                
+                //Title:
+                $pdf->SetFont('Arial','B',18);
+                $pdf->Cell(10,0,'        Tilmeldingsseddel',0,1);
+                $pdf->Cell(10,3,'        _______________________________________________',0,1);
+                $pdf->SetFont('Arial','',10);
+                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'               (Denne side udfyldes og afleveres til din træner/ kontaktperson i foreningen)'),0,1); 
+                
+                //Name:
+                $pdf->SetFont('Arial','B',12);
+                $pdf->Cell(10,10,'',0,1);
+                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'            Navn: '),0,0);
+                $pdf->SetFont('Arial','',12);
+                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'               '.$firstname .' '. $lastname),0,1);
+                
+                //Birthdate:
+                $pdf->SetFont('Arial','B',12);
+                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'            Fødselsdato: '),0,0);
+                $pdf->SetFont('Arial','',12);
+                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'                            '.$day.'/'.$month.'/'.$year),0,1); 
+                
+                //Adress:
+                $pdf->SetFont('Arial','B',12);
+                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'            Adresse: '),0,0);
+                $pdf->SetFont('Arial','',12);
+                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'                     '. $address),0,1);
+                
+                //Postalcode/city:
+                $pdf->SetFont('Arial','B',12);
+                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'            Postnummer/by: '),0,0);
+                $pdf->SetFont('Arial','',12);
+                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'                                  '. $postalcode.', '. $city),0,1);
+                
+                //Member's telephone:
+                $pdf->SetFont('Arial','B',12);
+                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'            Medlems tlf.: '),0,0);
+                $pdf->SetFont('Arial','',12);
+                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'                           '.$mtlp),0,1);
+                
+                //Member's email:
+                $pdf->SetFont('Arial','B',12);
+                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'            Medlems email: '),0,0);
+                $pdf->SetFont('Arial','',12);
+                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'                                 '. $memail),0,1);
+                
+                //Contactperson's name
+                $pdf->SetFont('Arial','B',12);
+                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'            Navn på kontaktperson/værge: '),0,0);
+                $pdf->SetFont('Arial','',12);
+                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'                                                           '. $contactname),0,1);
+                
+                //Contactperson's telephone
+                $pdf->SetFont('Arial','B',12);
+                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'            Kontaktpersons/værges tlf.: '),0,0);
+                $pdf->SetFont('Arial','',12);
+                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'                                                     '.$contactphone),0,1);
+                
+                //Contactperson's email
+                $pdf->SetFont('Arial','B',12);
+                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'            Email: '),0,0);
+                $pdf->SetFont('Arial','',12);
+                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'                '.$contactemail),0,1);
+                
+                //Other information:
+                $pdf->SetFont('Arial','B',12);
+                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'            Yderligere oplysninger: '),0,0);
+                $pdf->SetFont('Arial','',12);
+                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'                                               '. $textbox),0,1);
+                
+
+                //Signature number 1:
+                $pdf->SetFont('Arial','B',10);
+                $pdf->Cell(10,10,'',0,1);
+                $pdf->Cell(10,10,'',0,1);
+                $pdf->Cell(10,10,'',0,1);
+                $pdf->Cell(10,4,iconv("UTF-8", "ISO-8859-1",'                                                                      ______________________________'),0,1);
+                $pdf->Cell(10,4,iconv("UTF-8", "ISO-8859-1",'                                                                                           Underskrift'),0,1);
+                $pdf->SetFont('Arial','',9);
+                $pdf->Cell(10,4,iconv("UTF-8", "ISO-8859-1",'                                                        (Hvis medlem er under 18 år underskrift fra kontaktperson/værge)'),0,1);
+                
+                //Text about permission:
+                $pdf->Cell(10,10,'',0,1);
+                $pdf->Cell(10,10,'',0,1);
+                $pdf->SetFont('Arial','',10);
+                $pdf->Cell(10,4,iconv("UTF-8", "ISO-8859-1",'              Du giver hermed tilladelse til, at der må blive taget billeder/video af dig i forbindelse med aktiviter, som'),0,1);
+                $pdf->Cell(10,4,iconv("UTF-8", "ISO-8859-1",'              kan bruges som dokumentation i evalueringsrapporter og som en del af Nørrebro Fighters informationsmate-'    ),0,1);
+                $pdf->Cell(10,4,iconv("UTF-8", "ISO-8859-1",'              riale og hjemmeside. Vi oplyser dig omkring dette hver gang, vi tager billeder og anvender ikke billederne,' ),0,1);
+                $pdf->Cell(10,4,iconv("UTF-8", "ISO-8859-1",'              hvis du på forhånd giver besked, at du ikke vil med i billederne:'                                            ),0,1);
+                
+                
+                //Signature number 2:            
+                $pdf->SetFont('Arial','B',10);
+                $pdf->Cell(10,10,'',0,1);
+                $pdf->Cell(10,4,iconv("UTF-8", "ISO-8859-1",'                                                                      ______________________________'),0,1);
+                $pdf->Cell(10,4,iconv("UTF-8", "ISO-8859-1",'                                                                                           Underskrift'),0,1);
+                $pdf->SetFont('Arial','',9);
+                $pdf->Cell(10,4,iconv("UTF-8", "ISO-8859-1",'                                                        (Hvis medlem er under 18 år underskrift fra kontaktperson/værge)'),0,1);
+                
+                
+                $pdf->Output(getcwd().'/'.$pdfname.'.pdf','F');
             }
         }
     }
