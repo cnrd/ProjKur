@@ -36,7 +36,7 @@
     <script type='text/javascript' src='http://xn--nrrebrofighters-5tb.dk/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.2.1'></script>
     <meta name="generator" content="WordPress 3.8.1" />
 </head>
-
+ 
 <body>
         <nav>
 		<div class="row">
@@ -71,12 +71,25 @@
                                                                                                         
                                                                                                         
     <!---------------------------------------------------------   Our code ------------------------------------------------------------------>
+    <center>
     <h1>Tilmelding</h1>                                                                                                    
-
+    </center>
+    <br>
+    
     <?php
     include("config.php");
+    
+    //Connect to the database
+    try {
+        $dbh = new PDO($dbServer, $dbLogin, $dbPass);  
+    }
+    catch (PDOException $e) {
+        print "Error!: " . $e->getMessage() . "<br/>";
+        die();     
+    }
+    
     //I define the error variables and set them to an empty value
-    $firstnameErr = $lastnameErr = $yearErr = $addressErr = $postalcodeErr = $cityErr = $mtlpErr = $memailErr = $cemailErr = $passErr = $contactnameErr = $contactphoneErr = $contactemailErr = "";
+    $firstnameErr = $lastnameErr = $addressErr = $postalcodeErr = $cityErr = $mtlpErr = $memailErr = $cemailErr = $contactnameErr = $contactphoneErr = $contactemailErr = ""; //$passErr =
 
     //The function testInput removes all white space after the input, and slashes that appear if there are special characters, such as " or '.
     function testInput($theInput) {
@@ -89,131 +102,140 @@
 
     //Checking if input is valid
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        
+        $firstname = testInput($_POST["firstname"]);
         if (empty($_POST["firstname"])) {
             $firstnameErr = "* Indtast fornavn";
         }
         else {
-            $firstname = testInput($_POST["firstname"]);
             if (!preg_match("/^[a-zæøåA-ZÆØÅ ]*$/",$firstname)) {
                 $firstnameErr = "* Det er kun tilladt at bruge bogstaver";
                 $firstname = "";
             }
         }
+        
+        $lastname = testInput($_POST["lastname"]);
         if (empty($_POST["lastname"])) {
             $lastnameErr = "* Indtast efternavn";
         }
-        else {
-            $lastname = testInput($_POST["lastname"]);
+        else {    
             if (!preg_match("/^[a-zæøåA-ZÆØÅ ]*$/",$lastname)) {
                 $lastnameErr = "* Det er kun tilladt at bruge bogstaver";
                 $lastname = "";
             }
         }
-        if (empty($_POST["year"])) {
-            $yearErr = "* Indtast årstal";
-        }
-        else {
-            $year = testInput($_POST["year"]);
-            if (!preg_match("/^[0-9]*$/",$year)) {
-                $yearErr = "* Det er kun tilladt at bruge tal";
-                $year = "";
-            }
-        }
+        $year = testInput($_POST["year"]);
+        
+        $address = testInput($_POST["address"]);
         if (empty($_POST["address"])) {
             $addressErr = "* Indtast adresse";
         }
         else {
-            $address = testInput($_POST["address"]);
             if (!preg_match("/^[0-9a-zæøåA-ZÆØÅ., ]*$/",$address)) {
                 $addressErr = "* Det er kun tilladt at bruge bogstaver,tal, komma og punktum";
                 $address = "";
             }
         }
+        
+        $postalcode = testInput($_POST["postalcode"]);
         if (empty($_POST["postalcode"])) {
             $postalcodeErr = "* Indtast postnummer";
         }
         else {
-            $postalcode = testInput($_POST["postalcode"]);
             if (!preg_match("/^[0-9]*$/",$postalcode)) {
                 $postalcodeErr = "* Det er kun tilladt at bruge bogstaver og tal";
                 $postalcode = "";
             }
         }
+        
+        $city = testInput($_POST["city"]);
         if (empty($_POST["city"])) {
             $cityErr = "* Indtast by";
         }
         else {
-            $city = testInput($_POST["city"]);
             if (!preg_match("/^[a-zæøåA-ZÆØÅ ]*$/",$city)) {
                 $cityErr = "* Det er kun tilladt at bruge bogstaver";
                 $city = "";
             }
         }
+        $mtlp = testInput($_POST["mtlp"]);
         if (empty($_POST["mtlp"])) {
             $mtlpErr = "* Indtast medlems tlf.";
         }
         else {
-            $mtlp = testInput($_POST["mtlp"]);
             if (!preg_match("/^[0-9]*$/",$mtlp)) {
                 $mtlpErr = "* Det er kun tilladt at bruge tal";
                 $mtlp = "";
             }
         }
+        $memail = testInput($_POST["memail"]);
         if (empty($_POST["memail"])) {
             $memailErr = "* Indtast email-adresse";
         }
         else {
-            $memail = testInput($_POST["memail"]);
             if (!preg_match("/([\wæøå\-]+\@[\wæøå\-]+\.[\w\-]+)/",$memail)) {
                 $memailErr = "* Ugyldig email-adresse";
                 $memail = "";
             }
+            
+            $isAvailable = "SELECT medlemsemail FROM medlemsdatabase WHERE medlemsemail = '$memail'";
+            foreach ($dbh->query($isAvailable) as $test) {
+            }
+            
+            if (!empty($test[0])) {
+                $memailErr = "* Email er allerede i brug";
+                $memail = "";
+            }
         }
+        
+        $cemail = testInput($_POST["cemail"]);
         if (empty($_POST["cemail"])) {
             $cemailErr = "* Bekræft email-adresse";
         }
         else {
-            $cemail = testInput($_POST["cemail"]);
-            if (strcasecmp($memail,$cemail )!=0) {
+            if (strcasecmp($memail,$cemail )!=0 and $memail!="") {
                 $cemailErr = "* Email-adresserne matcher ikke";
                 $cemail = "";
             }
         }
-        if (empty($_POST["pass"])) {
-            $passErr = "* Indtast password";
-        }
-        else {
-            $pass = testInput($_POST["pass"]);
-            if (!preg_match("/^[0-9a-zæøåA-ZÆØÅ]*$/",$pass)) {
-                $passErr = "* Dit password må kun indeholde bogstaver og tal";
-                $pass = "";
-            }
-        }
+        
+        //$pass = testInput($_POST["pass"]);
+        //if (empty($_POST["pass"])) {
+        //    $passErr = "* Indtast password";
+        //}
+        //else {
+        //    if (!preg_match("/^[0-9a-zæøåA-ZÆØÅ]*$/",$pass)) {
+        //        $passErr = "* Dit password må kun indeholde bogstaver og tal";
+        //        $pass = "";
+        //    }
+        //}
+        
+        $contactname = testInput($_POST["contactname"]);
         if (empty($_POST["contactname"])) {
             $contactnameErr = "* Indtast fulde navn";
         }
         else {
-            $contactname = testInput($_POST["contactname"]);
+            
             if (!preg_match("/^[a-zæøåA-ZÆØÅ ]*$/",$contactname)) {
                 $contactnameErr = "* Der må kun være bogstaver og mellemrum";
                 $contactname = "";
             }
         }
+        $contactphone = testInput($_POST["contactphone"]);
         if (empty($_POST["contactphone"])) {
             $contactphoneErr = "* Indtast telefonnummer";
         }
         else {
-            $contactphone = testInput($_POST["contactphone"]);
             if (!preg_match("/^[0-9]*$/",$contactphone)) {
                 $contactphoneErr = "* Telefonnummeret må kun indeholde tal";
                 $contactphone = "";
             }
         }
-        if (empty($_POST["contactname"])) {
-            $contactnameErr = "* Indtast kontaktpersonens navn";
+        $contactemail = testInput($_POST["contactemail"]);
+        if (empty($_POST["contactemail"])) {
+            $contactemailErr = "* Indtast kontaktpersonens email";
         }
         else {
-            $contactemail = testInput($_POST["contactemail"]);
             if (!preg_match("/([\wæøå\-]+\@[\wæøå\-]+\.[\w\-]+)/",$contactemail)) {
                 $contactemailErr = "* Ugyldig email-adresse";
                 $contactemail = "";
@@ -224,33 +246,25 @@
         $textbox = $_POST["textbox"];
     }
 
+
     //When users click the submit button, we have to check if they filled out the whole registration correctly
     if(isset($_POST['Submit'])) {
-        if(!empty($firstname) && !empty($lastname)  && !empty($year) && !empty($address) && !empty($postalcode) && !empty($city) && !empty($mtlp) && !empty($memail) && !empty($cemail) && !empty($pass) && !empty($contactname) && !empty($contactphone) && !empty($contactemail)) {
-            if (empty($firstnameErr) && empty($lastnameErr) && empty($yearErr) && empty($addressErr) && empty($postalcodeErr) && empty($cityErr) && empty($mtlpErr) && empty($memailErr) && empty($cemailErr) && empty($passErr) && empty($contactnameErr) && empty($contactphoneErr) && empty($contactemailErr)) {
-
-                //If correct, we connect to the database  (Right now, it's connecting to the wrong database)
-                try {
-                    $dbh = new PDO($dbServer, $dbLogin, $dbPass);
-                }
-                catch (PDOException $e) {
-                    print "Error!: " . $e->getMessage() . "<br/>";
-                die();
-                }
+        if(!empty($firstname) && !empty($lastname)  && !empty($address) && !empty($postalcode) && !empty($city) && !empty($mtlp) && !empty($memail) && !empty($cemail) && !empty($contactname) && !empty($contactphone) && !empty($contactemail)) {
+            if (empty($firstnameErr) && empty($lastnameErr) && empty($addressErr) && empty($postalcodeErr) && empty($cityErr) && empty($mtlpErr) && empty($memailErr) && empty($cemailErr) && empty($contactnameErr) && empty($contactphoneErr) && empty($contactemailErr)) {
                 
                 //The password is now hashed, so it can be stored securely
                 // A higher "cost" is more secure but consumes more processing power
-                $cost = 10;
+                //$cost = 10;
 
                 // Create a random salt
-                $salt = strtr(base64_encode(mcrypt_create_iv(16, MCRYPT_DEV_URANDOM)), '+', '.');
+                //$salt = strtr(base64_encode(mcrypt_create_iv(16, MCRYPT_DEV_URANDOM)), '+', '.');
 
                 // Prefix information about the hash so PHP knows how to verify it later.
                 // "$2a$" Means we're using the Blowfish algorithm. The following two digits are the cost parameter.
-                $salt = sprintf("$2a$%02d$", $cost) . $salt;
+                //$salt = sprintf("$2a$%02d$", $cost) . $salt;
 
                 // Hash the password with the salt
-                $hash = crypt($pass, $salt);
+                //$hash = crypt($pass, $salt);
                 
                 
                 //And then the information is inserted into the database by queries.
@@ -261,7 +275,7 @@
                     $query1.= "VALUES (?, ?, ?, ?)";
                     $prepQ1 = $dbh->prepare($query1);
 
-                    $query2 = "INSERT INTO LogInDatabase(loginEmail,password) ";  //We are going to find a method for storing passwords securely
+                    $query2 = "INSERT INTO LogInDatabase(loginEmail,'') ";
                     $query2.= "VALUES (?, ?)";
                     $prepQ2 = $dbh->prepare($query2);
 
@@ -278,7 +292,7 @@
                     $prepQ5 = $dbh->prepare($query5);
 
                     $prepQ1->execute(array($firstname,$lastname,$memail,$mtlp));
-                    $prepQ2->execute(array($memail,$hash));
+                    $prepQ2->execute(array($memail,''));//$hash
                     $prepQ3->execute(array($memail, $year.'-'.$month.'-'.$day, $address, $postalcode, $city, $textbox));
                     $prepQ4->execute(array($contactname, $contactphone, $contactemail, $memail));
                     $prepQ5->execute(array($memail));
@@ -291,8 +305,7 @@
 
                 echo "<h4>Tilmeldingen er blevet registreret.<br> Vi har sendt en PDF-fil til din email som du skal printe ud og aflevere i klubben</h4><br><br><br><br><br><br><br>";   //Consider redirecting them to a new page
                 
-                
-                
+                 
                 //We are going to use the member's email as the name for the generated pdf
                 function clean($string) {
                     return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
@@ -325,7 +338,7 @@
                 $pdf->Cell(10,0,'        Tilmeldingsseddel',0,1);
                 $pdf->Cell(10,3,'        _______________________________________________',0,1);
                 $pdf->SetFont('Arial','',10);
-                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'               (Denne side udfyldes og afleveres til din træner/ kontaktperson i foreningen)'),0,1); 
+                $pdf->Cell(10,10,iconv("UTF-8", "ISO-8859-1",'               (Denne side skal udskrives og afleveres til din træner / kontaktperson i foreningen)'),0,1); 
                 
                 //Name:
                 $pdf->SetFont('Arial','B',12);
@@ -419,6 +432,14 @@
                 
                 
                 $pdf->Output(getcwd().'/'.$pdfname.'.pdf','F');
+                
+                
+                
+                
+                
+                //I think we need a SMTP server (check out http://www.iredmail.org/)
+                //Time to send the email...
+                
             }
         }
     }
@@ -452,20 +473,20 @@
 
         <tr>
             <td>   Navn   </td>
-            <td>  <input type="text" name="firstname" value="<?php echo $firstname; ?>" style="width: 150px;">  </td>
+            <td>  <input type="text" name="firstname" value="<?php echo $firstname; ?>" style="width: 170px;">  </td>
             <td colspan="3">  <span class="errors"> <?php echo $firstnameErr;?></span></td>
         </tr>
 
         <tr>
             <td>   Efternavn   </td>
-            <td>  <input type="text" name="lastname" value="<?php echo $lastname; ?>" style="width: 150px;">    </td>
+            <td>  <input type="text" name="lastname" value="<?php echo $lastname; ?>" style="width: 170px;">    </td>
             <td colspan="3">  <span class="errors"> <?php echo $lastnameErr;?></span></td>
         </tr>
 
         <!-- Drop down list for the date of birth -->
         <tr>
             <td>   Fødselsdato(dd/mm/åååå)   </td>
-            <td colspan="3">
+            <td colspan="4">
             <select name='day' style="width: 50px;">
             <?php
             $day = 1;
@@ -495,9 +516,24 @@
                 }
             }
             ?>
-            </select></td> 
-            <td><input type="text" maxlength="4" name="year" value="<?php echo $year; ?>" style="width: 80px;"> </td>
-            <td colspan="2"><span class="errors"> <?php echo $yearErr;?></span></td>
+            </select>
+            
+            <select name='year' style='width: 70px;'>
+            <?php
+            $year = date("Y");
+            $yearUpTo = 1950;
+            while ($year >= $yearUpTo) {
+                
+                    echo "<option value=\"$year\">$year</option>";
+                   $year--;
+            }
+            ?>
+            </select>           
+            
+                
+                
+            </td>
+           
         </tr>
 
 
@@ -534,13 +570,15 @@
             <td><input type="text" name="cemail" value="<?php echo $cemail; ?>"></td>
             <td colspan="3"><span class="errors"> <?php echo $cemailErr;?></span></td>
         </tr>
-
+        
+        <!--
         <tr>
             <td>   Password   </td>
             <td><input type="password" name="pass"></td>
             <td colspan="3"><span class="errors"> <?php echo $passErr;?></span></td>
         </tr>
-
+        -->
+        
         <tr>
             <td><br><br>   Navn på kontaktperson/værge   </td>
             <td><br><br><input type="text" name="contactname" value="<?php echo $contactname; ?>"></td>
@@ -577,16 +615,7 @@
             </td>
         </form>
     </table>
-    <br><br>
-
-    
-    
-<!-- This should only be for when they are printing the registration form out
-    _________________________<br>
-    Underskrift
-    <h5>(Hvis medlem er under 18 år underskrift fra kontaktperson/værge)<h5>
--->
-    
+        <br><br>
     
     
 <!------------------------------------------------  The bar at the left side of their homepage -------------------------------------------->
@@ -663,9 +692,6 @@
     <dd>Christina Relsted (formand)</dd>
     <dd>Mail: kontakt@norrebrofighters.dk</dd>
 </dl>
-    
-    
-    
     
     
     </body>
